@@ -1,0 +1,68 @@
+bdi-support-agent/
+├─── data_extraction_pipeline/         # For building and updating the knowledge base from BDI
+│    ├─── src/                          # Source code for extraction, processing, indexing
+│    │    ├─── connectors/               # Modules to connect to BDI data sources
+│    │    │    ├─── bdi_database_connector.py  # If BDI has a DB you can query
+│    │    │    ├─── bdi_site_scraper.py      # For headless browsing & scraping BDI site
+│    │    │    ├─── bdi_internal_api_client.py # If BDI has internal APIs you can use
+│    │    │    └─── protobuf_doc_parser.py   # To parse info from .proto or generated files
+│    │    ├─── processing/               # Modules for cleaning, chunking, structuring data
+│    │    │    ├─── text_cleaner.py
+│    │    │    └─── content_chunker.py
+│    │    ├─── indexing/                 # Modules for uploading to Azure AI Search
+│    │    │    └─── azure_ai_search_manager.py
+│    │    └─── main_pipeline.py          # Orchestrates the extraction and indexing
+│    ├─── config/                       # Configuration files for the pipeline
+│    │    ├─── bdi_sources_config.yaml   # URLs, DB connections (use secrets management!)
+│    │    └─── pipeline_settings.yaml    # Chunking parameters, schedule info
+│    ├─── scripts/                      # Helper scripts (e.g., for manual pipeline runs)
+│    │    └─── run_full_extraction.sh
+│    └─── requirements.txt              # Python dependencies for this pipeline
+│
+├─── live_lookup_service/              # For fetching real-time info about specific BDI entities
+│    ├─── azure_function_app/           # Example: Azure Function for live lookups
+│    │    ├─── BdiEntityLookup/          # The actual Function code
+│    │    │    ├─── __init__.py
+│    │    │    ├─── function.json
+│    │    │    └─── live_bdi_connector.py # Logic to query BDI for specific entity
+│    │    ├─── host.json
+│    │    ├─── local.settings.json.example # For local development secrets
+│    │    └─── requirements.txt
+│    ├─── power_automate_flows/         # (Alternative/Complement) Exported Power Automate flows
+│    │    └─── BDI_Live_Entity_Query.zip
+│    └─── custom_connectors/            # If building a Power Platform Custom Connector
+│         └─── bdi_live_api_definition.swagger.json
+│
+├─── infrastructure/                   # Infrastructure as Code (IaC) for Azure resources
+│    ├─── azure/                        # Bicep, ARM templates, or Terraform
+│    │    ├─── main.bicep                # Main deployment script
+│    │    ├─── modules/
+│    │    │    ├─── ai_search.bicep
+│    │    │    ├─── openai_service.bicep  # If deploying a dedicated instance
+│    │    │    ├─── function_app.bicep    # For the live lookup service
+│    │    │    ├─── storage_account.bicep # For function code or staging data
+│    │    │    └─── networking.bicep      # VNet integration, Private Endpoints for VPN access
+│    │    └─── parameters.dev.json       # Parameters for development environment
+│
+├─── copilot_studio_artifacts/         # Exports from Copilot Studio & design docs
+│    ├─── solution_exports/             # Exported .zip solutions from Copilot Studio
+│    │    └─── BDISupportAgent_V1.0.zip
+│    ├─── topic_designs/                # Markdown or diagrams for complex topics
+│    │    └─── DocumentDeletionDiagnosis.md
+│    └─── entity_definitions.json       # Custom entities defined in Copilot Studio
+│
+├─── docs/                             # Project documentation
+│    ├─── ARCHITECTURE.md               # Detailed system architecture (like prior discussion)
+│    ├─── SETUP_GUIDE.md                # Instructions for deploying and configuring
+│    ├─── BDI_DATA_SOURCES.md           # Details on BDI data locations & access methods
+│    ├─── COST_OPTIMIZATION.md          # Notes on cost considerations and strategies
+│    └─── MAINTENANCE.md                # How to update and maintain the agent
+│
+├─── tests/                            # Unit and integration tests
+│    ├─── data_extraction_pipeline/
+│    │    └─── test_bdi_site_scraper.py
+│    └─── live_lookup_service/
+│         └─── test_bdi_entity_lookup.py
+│
+├─── .gitignore                        # Standard git ignore file
+└─── README.md                         # Project overview, goals, and quick start
